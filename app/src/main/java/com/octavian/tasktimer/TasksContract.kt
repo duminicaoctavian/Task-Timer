@@ -2,7 +2,7 @@ package com.octavian.tasktimer
 
 import android.provider.BaseColumns
 
-object TasksContract {
+object TasksContract { // object is automatically a thread safe singleton
 
     internal const val TABLE_NAME = "Tasks"
 
