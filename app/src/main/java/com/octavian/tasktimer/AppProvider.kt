@@ -13,7 +13,7 @@ import android.util.Log
  */
 
 private const val TAG = "AppProvider"
-private val CONTENT_AUTHORITY = "com.octavian.tasktimer.provider"
+const val CONTENT_AUTHORITY = "com.octavian.tasktimer.provider"
 
 private const val TASKS = 100
 private const val TASKS_ID = 101
@@ -58,7 +58,8 @@ class AppProvider: ContentProvider() {
         TODO("Not yet implemented")
     }
 
-    override fun query(uri: Uri, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
+    override fun query(uri: Uri, projection: Array<out String>?, selection: String?,
+                       selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
         Log.d(TAG, "query: called with uri $uri")
         val match = uriMatcher.match(uri)
         Log.d(TAG, "query: match is $match")
