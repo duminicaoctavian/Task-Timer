@@ -4,6 +4,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
+import android.database.SQLException
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.util.Log
@@ -114,7 +115,7 @@ class AppProvider: ContentProvider() {
             else -> throw IllegalArgumentException("Unknown URI: $uri")
         }
 
-        val context = context ?: throw NullPointerException("query: context is null")
+        val context = context ?: throw NullPointerException("query: Context cannot be null!")
         val db = AppDatabase.getInstance(context).readableDatabase
         val cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder)
         Log.d(TAG, "query: rows in returned cursor = ${cursor.count}") // TODO remove this line
@@ -122,8 +123,43 @@ class AppProvider: ContentProvider() {
         return cursor
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+    override fun insert(uri: Uri, values: ContentValues?): Uri {
+        Log.d(TAG, "query: called with uri $uri")
+        val match = uriMatcher.match(uri)
+        Log.d(TAG, "query: match is $match")
+
+        val recordId: Long
+        val returnUri: Uri
+
+        val context = context ?: throw java.lang.NullPointerException("insert: Context cannot be null!")
+
+        when(match) {
+
+            TASKS -> {
+                val db = AppDatabase.getInstance(context).writableDatabase
+                recordId = db.insert(TasksContract.TABLE_NAME, null, values)
+                if (recordId != -1L) {
+                    returnUri = TasksContract.buildUriFromId(recordId)
+                } else {
+                    throw SQLException("Failed to insert, Uri was $uri")
+                }
+            }
+
+            TIMINGS -> {
+                val db = AppDatabase.getInstance(context).writableDatabase
+                recordId = db.insert(TimingsContract.TABLE_NAME, null, values)
+                if (recordId != -1L) {
+                    returnUri = TimingsContract.buildUriFromId(recordId)
+                } else {
+                    throw SQLException("Failed to insert, Uri was $uri")
+                }
+            }
+
+            else -> throw IllegalArgumentException("Unknown uri: $uri")
+        }
+
+        Log.d(TAG, "Exiting insert, returning $returnUri")
+        return returnUri
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<out String>?): Int {
