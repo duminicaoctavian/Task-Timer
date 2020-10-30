@@ -72,7 +72,7 @@ class AppProvider: ContentProvider() {
             TASKS_ID -> {
                 queryBuilder.tables = TasksContract.TABLE_NAME
                 val taskId = TasksContract.getId(uri)
-                queryBuilder.appendWhereEscapeString("${TasksContract.Columns.ID} = $taskId") // avoid SQL Injection attacks
+                queryBuilder.appendWhere("${TasksContract.Columns.ID} = $taskId") // avoid SQL Injection attacks
             }
 
 //            TIMINGS -> queryBuilder.tables = TimingsContract.TABLE_NAME
