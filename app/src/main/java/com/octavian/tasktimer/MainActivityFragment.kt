@@ -64,7 +64,7 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
     }
 
     override fun onDeleteClick(task: Task) {
-
+        viewModel.deleteTask(task.id)
     }
 
     override fun onTaskLongClick(task: Task) {
