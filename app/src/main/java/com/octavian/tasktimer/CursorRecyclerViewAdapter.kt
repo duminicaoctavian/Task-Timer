@@ -34,12 +34,8 @@ class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
 
         if (cursor == null || cursor.count == 0) {
             Log.d(TAG, "onBindViewHolder: providing instructions")
-            holder.tli_name.setText("Instructions")
-            holder.tli_description.setText("Use the add button (+) in the toolbar above to create new tasks." +
-                    "\n\nTasks with lower sort orders will be placed higher up the list." +
-                    "Tasks with the same sort order will be sorted alphabetically." +
-                    "\n\nTapping a task will start the timer for that task (and will stop the timer for any previous task that was being timed)." +
-                    "\n\nEach task has Edit and Delete buttons if you want to change the details or remove the task.")
+            holder.tli_name.setText(R.string.instructions_heading)
+            holder.tli_description.setText(R.string.instructions)
             holder.tli_edit.visibility = View.GONE
             holder.tli_delete.visibility = View.GONE
         } else {
@@ -64,6 +60,40 @@ class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        Log.d(TAG, "getItemCount: starts")
+        val cursor = cursor
+        val count = if (cursor == null || cursor.count == 0) {
+            1 // fib because we populate a single ViewHolder with instructions
+        } else {
+            cursor.count
+        }
+        Log.d(TAG, "returning $count")
+        return count
+    }
+
+    /**
+     * Swap in a new Cursor, returning the old Cursor.
+     * The returned old Cursor is *not* closed.
+     *
+     * @param newCursor The new cursor to be used
+     * @return Returns the previously set Cursor, or null if there wasn't one.
+     * If the given new Cursor is the same instance as the previously set
+     * Cursor, null is also returned.
+     */
+    fun swapCursor(newCursor: Cursor?): Cursor? {
+        if (newCursor === cursor) {
+            return null
+        }
+        val numItems = itemCount
+        val oldCursor = cursor
+        cursor = newCursor
+        if (newCursor != null) {
+            // notify the observers about the new cursor
+            notifyDataSetChanged()
+        } else {
+            // notify the observers about the lack of a data set
+            notifyItemRangeRemoved(0, numItems)
+        }
+        return oldCursor
     }
 }
