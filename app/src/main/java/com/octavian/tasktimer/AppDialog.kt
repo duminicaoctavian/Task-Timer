@@ -1,9 +1,9 @@
 package com.octavian.tasktimer
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDialogFragment
@@ -104,5 +104,16 @@ class AppDialog : AppCompatDialogFragment() {
 
         // Reset the active callbacks interface, because we're no longer attached.
         dialogEvents = null
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        Log.d(TAG, "onCancel called")
+        val dialogId = arguments!!.getInt(DIALOG_ID)
+//        dialogEvents?.onDialogCancelled(dialogId)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        Log.d(TAG, "onDismiss called")
+        super.onDismiss(dialog)
     }
 }
