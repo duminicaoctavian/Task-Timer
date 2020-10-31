@@ -1,5 +1,6 @@
 package com.octavian.tasktimer
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,23 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        mTwoPane = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+        if (fragment != null) {
+            // There was an existing fragment to edit a task, make sure the panes are set correctly
+            showEditPane()
+        } else {
+            task_details_container.visibility = if(mTwoPane) View.INVISIBLE else View.GONE
+            mainFragment.view?.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showEditPane() {
+        task_details_container.visibility = View.VISIBLE
+        // hide the left hand pane, if in single pane view
+        mainFragment.view?.visibility = if(mTwoPane) View.VISIBLE else View.GONE
     }
 
     private fun remoteEditPane(fragment: Fragment? = null) {
@@ -39,7 +57,7 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
 
     override fun onSaveClicked() {
         Log.d(TAG, "onSaveClicked: called")
-        var fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+        val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
         remoteEditPane(fragment)
     }
 
@@ -69,6 +87,8 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         supportFragmentManager.beginTransaction()
             .replace(R.id.task_details_container, newFragment)
             .commit()
+
+        showEditPane()
 
         Log.d(TAG, "Exiting taskEditRequest")
     }
