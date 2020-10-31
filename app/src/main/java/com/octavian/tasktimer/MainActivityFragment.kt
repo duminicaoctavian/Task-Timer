@@ -11,10 +11,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_main.*
+import java.lang.RuntimeException
 
 private const val TAG = "MainActivityFragment"
 
 class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickListener {
+
+    interface OnTaskEdit {
+        fun onTaskEdit(task: Task)
+    }
 
     private val viewModel by lazy { ViewModelProviders.of(requireActivity()).get(TaskTimerViewModel::class.java) }
     private val mAdapter = CursorRecyclerViewAdapter(null, this)
@@ -28,6 +33,10 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
     override fun onAttach(context: Context) {
         Log.d(TAG, "onAttach: called")
         super.onAttach(context)
+
+        if (context !is OnTaskEdit) {
+            throw RuntimeException("${context.toString()} must implement OnTaskEdit")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +60,7 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
     }
 
     override fun onEditClick(task: Task) {
-
+        (activity as OnTaskEdit?)?.onTaskEdit(task)
     }
 
     override fun onDeleteClick(task: Task) {
