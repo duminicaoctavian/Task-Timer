@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        Log.d(TAG, "onCreate: called")
+        Log.d(TAG, "onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         mainFragment.view?.visibility = if(mTwoPane) View.VISIBLE else View.GONE
     }
 
-    private fun remoteEditPane(fragment: Fragment? = null) {
+    private fun removeEditPane(fragment: Fragment? = null) {
         Log.d(TAG, "removeEditPane: called")
         if (fragment != null) {
             supportFragmentManager.beginTransaction()
@@ -58,12 +58,14 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         task_details_container.visibility = if(mTwoPane) View.INVISIBLE else View.GONE
         // and show the left hand pane
         mainFragment.view?.visibility = View.VISIBLE
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onSaveClicked() {
         Log.d(TAG, "onSaveClicked: called")
         val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
-        remoteEditPane(fragment)
+        removeEditPane(fragment)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,6 +81,11 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         when (item.itemId) {
             R.id.menumain_addTask -> taskEditRequest(null)
 //            R.id.menumain_settings -> true
+            android.R.id.home -> {
+                Log.d(TAG, "onOptionsItemSelected: home button pressed")
+                val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+                removeEditPane(fragment)
+            }
 
         }
         return super.onOptionsItemSelected(item)
