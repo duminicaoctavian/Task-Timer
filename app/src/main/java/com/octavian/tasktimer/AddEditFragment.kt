@@ -53,7 +53,7 @@ class AddEditFragment : Fragment() {
                 addedit_description.setText(task.description)
                 addedit_sort_order.setText(Integer.toString(task.sortOrder))
             } else {
-                // No task, so we must be adding a new task and editing an existing one
+                // No task, so we must be adding a new task and NOT editing an existing one
                 Log.d(TAG, "onViewCreated: No arguments, adding new record")
             }
         }
@@ -124,7 +124,7 @@ class AddEditFragment : Fragment() {
         if (context is OnSaveClicked) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnSaveClicked")
+            throw RuntimeException("$context must implement OnSaveClicked")
         }
     }
 
