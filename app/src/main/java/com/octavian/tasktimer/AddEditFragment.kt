@@ -83,7 +83,6 @@ class AddEditFragment : Fragment() {
         if (newTask != task) {
             Log.d(TAG, "saveTask: saving task, id is ${newTask.id}")
             task = viewModel.saveTask(newTask)
-        } else {
             Log.d(TAG, "saveTask: id is ${task?.id}")
         }
     }
