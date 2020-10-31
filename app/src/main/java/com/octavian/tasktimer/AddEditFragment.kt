@@ -26,7 +26,7 @@ class AddEditFragment : Fragment() {
 
     private var task: Task? = null
     private var listener: OnSaveClicked? = null
-    private val viewModel by lazy { ViewModelProviders.of(this).get(TaskTimerViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProviders.of(requireActivity()).get(TaskTimerViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: starts")
