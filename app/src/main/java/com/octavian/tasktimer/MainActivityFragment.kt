@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import java.lang.RuntimeException
 
 private const val TAG = "MainActivityFragment"
+private const val DIALOG_ID_DELETE = 1
+private const val DIALOG_TASK_ID = "task_id"
 
 class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickListener {
 
@@ -64,6 +66,16 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
     }
 
     override fun onDeleteClick(task: Task) {
+        val args = Bundle().apply {
+            putInt(DIALOG_ID, DIALOG_ID_DELETE)
+            putString(DIALOG_MESSAGE, getString(R.string.deldiag_message, task.id, task.name))
+            putInt(DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption)
+        }
+
+        val dialog = AppDialog()
+        dialog.arguments = args
+        dialog.show(childFragmentManager, null)
+
         viewModel.deleteTask(task.id)
     }
 
