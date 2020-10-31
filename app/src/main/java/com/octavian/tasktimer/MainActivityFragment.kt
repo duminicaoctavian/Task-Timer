@@ -35,7 +35,7 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
         super.onAttach(context)
 
         if (context !is OnTaskEdit) {
-            throw RuntimeException("${context.toString()} must implement OnTaskEdit")
+            throw RuntimeException("$context must implement OnTaskEdit")
         }
     }
 
