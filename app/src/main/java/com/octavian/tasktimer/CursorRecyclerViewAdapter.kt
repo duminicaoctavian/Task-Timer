@@ -13,7 +13,27 @@ import java.lang.IllegalStateException
 class TaskViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView),
         LayoutContainer { // Layout Container is still experimental as of Oct 2020
+
 //    var name: TextView = containerView.findViewById(R.id.tli_name)
+    fun bind(task: Task) {
+        tli_name.text = task.name
+        tli_description.text = task.description
+        tli_edit.visibility = View.VISIBLE
+        tli_delete.visibility = View.VISIBLE
+
+        tli_edit.setOnClickListener {
+            Log.d(TAG, "edit button tapped. task name is ${task.name}")
+        }
+
+        tli_delete.setOnClickListener {
+            Log.d(TAG, "delete button tapped. task name is ${task.name}")
+        }
+
+        containerView.setOnLongClickListener {
+            Log.d(TAG, "onLongClick: task name is ${task.name}")
+            true
+        }
+    }
 }
 
 private const val TAG = "CursorRecyclerViewAdapt"
@@ -52,10 +72,7 @@ class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
             // Remember that the id is not set in the constructor
             task.id = cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.ID))
 
-            holder.tli_name.text = task.name
-            holder.tli_description.text = task.description
-            holder.tli_edit.visibility = View.VISIBLE // TODO: add onClick
-            holder.tli_delete.visibility = View.VISIBLE // TODO: add onClick
+            holder.bind(task)
         }
     }
 
