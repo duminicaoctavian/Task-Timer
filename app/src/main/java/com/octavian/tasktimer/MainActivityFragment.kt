@@ -17,7 +17,9 @@ private const val TAG = "MainActivityFragment"
 private const val DIALOG_ID_DELETE = 1
 private const val DIALOG_TASK_ID = "task_id"
 
-class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickListener {
+class MainActivityFragment : Fragment(),
+    CursorRecyclerViewAdapter.OnTaskClickListener,
+    AppDialog.DialogEvents {
 
     interface OnTaskEdit {
         fun onTaskEdit(task: Task)
@@ -70,6 +72,7 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
             putInt(DIALOG_ID, DIALOG_ID_DELETE)
             putString(DIALOG_MESSAGE, getString(R.string.deldiag_message, task.id, task.name))
             putInt(DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption)
+            putLong(DIALOG_TASK_ID, task.id) // pass the id in the arguments, so we can retrieve it when we get called back.
         }
 
         val dialog = AppDialog()
@@ -81,6 +84,10 @@ class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickLi
 
     override fun onTaskLongClick(task: Task) {
 
+    }
+
+    override fun onPositiveDialogResult(dialogId: Int, args: Bundle) {
+        Log.d(TAG, "onPositiveDialogResult: called with id $dialogId")
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
