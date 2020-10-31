@@ -15,22 +15,22 @@ class TaskViewHolder(override val containerView: View) :
         LayoutContainer { // Layout Container is still experimental as of Oct 2020
 
 //    var name: TextView = containerView.findViewById(R.id.tli_name)
-    fun bind(task: Task) {
+    fun bind(task: Task, listener: CursorRecyclerViewAdapter.OnTaskClickListener) {
         tli_name.text = task.name
         tli_description.text = task.description
         tli_edit.visibility = View.VISIBLE
         tli_delete.visibility = View.VISIBLE
 
         tli_edit.setOnClickListener {
-            Log.d(TAG, "edit button tapped. task name is ${task.name}")
+            listener.onEditClick(task)
         }
 
         tli_delete.setOnClickListener {
-            Log.d(TAG, "delete button tapped. task name is ${task.name}")
+            listener.onDeleteClick(task)
         }
 
         containerView.setOnLongClickListener {
-            Log.d(TAG, "onLongClick: task name is ${task.name}")
+            listener.onTaskLongClick(task)
             true
         }
     }
@@ -38,8 +38,14 @@ class TaskViewHolder(override val containerView: View) :
 
 private const val TAG = "CursorRecyclerViewAdapt"
 
-class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
+class CursorRecyclerViewAdapter(private var cursor: Cursor?, private val listener: OnTaskClickListener) :
         RecyclerView.Adapter<TaskViewHolder>() {
+
+    interface OnTaskClickListener {
+        fun onEditClick(task: Task)
+        fun onDeleteClick(task: Task)
+        fun onTaskLongClick(task: Task)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         Log.d(TAG, "onCreateViewHolder: new view requested")
@@ -48,7 +54,6 @@ class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder: starts")
 
         val cursor = cursor // avoid problems with smart cast
 
@@ -72,19 +77,19 @@ class CursorRecyclerViewAdapter(private var cursor: Cursor?) :
             // Remember that the id is not set in the constructor
             task.id = cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.ID))
 
-            holder.bind(task)
+            holder.bind(task, listener)
         }
     }
 
     override fun getItemCount(): Int {
-        Log.d(TAG, "getItemCount: starts")
+
         val cursor = cursor
         val count = if (cursor == null || cursor.count == 0) {
             1 // fib because we populate a single ViewHolder with instructions
         } else {
             cursor.count
         }
-        Log.d(TAG, "returning $count")
+
         return count
     }
 
