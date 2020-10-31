@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -14,6 +16,7 @@ private const val TAG = "MainActivityFragment"
 
 class MainActivityFragment : Fragment() {
 
+    private val viewModel by lazy { ViewModelProviders.of(requireActivity()).get(TaskTimerViewModel::class.java) }
     private val mAdapter = CursorRecyclerViewAdapter(null)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +33,8 @@ class MainActivityFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: called")
         super.onCreate(savedInstanceState)
+
+        viewModel.cursor.observe(this, Observer { cursor -> mAdapter.swapCursor(cursor)?.close() })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
