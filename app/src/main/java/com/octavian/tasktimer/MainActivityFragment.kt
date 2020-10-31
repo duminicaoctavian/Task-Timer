@@ -14,10 +14,10 @@ import kotlinx.android.synthetic.main.fragment_main.*
 
 private const val TAG = "MainActivityFragment"
 
-class MainActivityFragment : Fragment() {
+class MainActivityFragment : Fragment(), CursorRecyclerViewAdapter.OnTaskClickListener {
 
     private val viewModel by lazy { ViewModelProviders.of(requireActivity()).get(TaskTimerViewModel::class.java) }
-    private val mAdapter = CursorRecyclerViewAdapter(null)
+    private val mAdapter = CursorRecyclerViewAdapter(null, this)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,6 +48,18 @@ class MainActivityFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.d(TAG, "onActivityCreated: called")
         super.onActivityCreated(savedInstanceState)
+    }
+
+    override fun onEditClick(task: Task) {
+
+    }
+
+    override fun onDeleteClick(task: Task) {
+
+    }
+
+    override fun onTaskLongClick(task: Task) {
+
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
