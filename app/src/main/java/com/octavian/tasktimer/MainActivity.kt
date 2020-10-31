@@ -105,6 +105,15 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         Log.d(TAG, "Exiting taskEditRequest")
     }
 
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+        if (fragment == null || mTwoPane) {
+            super.onBackPressed()
+        } else {
+            removeEditPane(fragment)
+        }
+    }
+
     override fun onStart() {
         Log.d(TAG, "onStart: called")
         super.onStart()
