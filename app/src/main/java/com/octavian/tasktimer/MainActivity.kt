@@ -5,10 +5,17 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
+
+    //Whether or not the activity is in 2-pane mode
+    // i.e running in landscape, or on tablet
+    private var mTwoPane = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,8 +23,24 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         setSupportActionBar(findViewById(R.id.toolbar))
     }
 
+    private fun remoteEditPane(fragment: Fragment? = null) {
+        Log.d(TAG, "removeEditPane: called")
+        if (fragment != null) {
+            supportFragmentManager.beginTransaction()
+                .remove(fragment)
+                .commit()
+        }
+
+        // Set the visibility of the right hand pane
+        task_details_container.visibility = if(mTwoPane) View.INVISIBLE else View.GONE
+        // and show the left hand pane
+        mainFragment.view?.visibility = View.VISIBLE
+    }
+
     override fun onSaveClicked() {
-        TODO("Not yet implemented")
+        Log.d(TAG, "onSaveClicked: called")
+        var fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+        remoteEditPane(fragment)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -28,7 +51,7 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up addedit_save, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.menumain_addTask -> taskEditRequest(null)
@@ -44,7 +67,7 @@ class MainActivity : AppCompatActivity(), AddEditFragment.OnSaveClicked {
         // Create a new fragment to edit the task
         val newFragment = AddEditFragment.newInstance(task)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment, newFragment)
+            .replace(R.id.task_details_container, newFragment)
             .commit()
 
         Log.d(TAG, "Exiting taskEditRequest")
