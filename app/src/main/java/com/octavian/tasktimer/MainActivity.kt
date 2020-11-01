@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "MainActivity"
+private const val DIALOG_ID_CANCEL_EDIT = 1
 
 class MainActivity : AppCompatActivity(),
     AddEditFragment.OnSaveClicked,
@@ -86,7 +87,15 @@ class MainActivity : AppCompatActivity(),
             android.R.id.home -> {
                 Log.d(TAG, "onOptionsItemSelected: home button pressed")
                 val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
-                removeEditPane(fragment)
+//                removeEditPane(fragment)
+                if ((fragment is AddEditFragment) && fragment.isDirty()) {
+                    showConfirmationDialog(DIALOG_ID_CANCEL_EDIT,
+                            getString(R.string.cancelEditDiag_message),
+                            R.string.cancelEditDiag_positive_caption,
+                            R.string.cancelEditDiag_negative_caption)
+                } else {
+                    removeEditPane(fragment)
+                }
             }
 
         }
@@ -116,7 +125,15 @@ class MainActivity : AppCompatActivity(),
         if (fragment == null || mTwoPane) {
             super.onBackPressed()
         } else {
-            removeEditPane(fragment)
+//            removeEditPane(fragment)
+            if ((fragment is AddEditFragment) && fragment.isDirty()) {
+                showConfirmationDialog(DIALOG_ID_CANCEL_EDIT,
+                    getString(R.string.cancelEditDiag_message),
+                    R.string.cancelEditDiag_positive_caption,
+                    R.string.cancelEditDiag_negative_caption)
+            } else {
+                removeEditPane(fragment)
+            }
         }
     }
 
