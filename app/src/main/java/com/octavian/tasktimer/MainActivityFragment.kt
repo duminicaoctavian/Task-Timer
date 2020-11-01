@@ -78,8 +78,6 @@ class MainActivityFragment : Fragment(),
         val dialog = AppDialog()
         dialog.arguments = args
         dialog.show(childFragmentManager, null)
-
-        viewModel.deleteTask(task.id)
     }
 
     override fun onTaskLongClick(task: Task) {
@@ -88,6 +86,12 @@ class MainActivityFragment : Fragment(),
 
     override fun onPositiveDialogResult(dialogId: Int, args: Bundle) {
         Log.d(TAG, "onPositiveDialogResult: called with id $dialogId")
+
+        if (dialogId == DIALOG_ID_DELETE) {
+            val taskId = args.getLong(DIALOG_TASK_ID)
+            if (BuildConfig.DEBUG && taskId == 0L) throw AssertionError("Task ID is zero")
+            viewModel.deleteTask(taskId)
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
