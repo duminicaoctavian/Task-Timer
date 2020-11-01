@@ -116,6 +116,13 @@ class MainActivity : AppCompatActivity(),
         builder.setTitle(R.string.app_name)
         builder.setIcon(R.mipmap.ic_launcher)
 
+        builder.setPositiveButton(R.string.ok) { _, _ ->
+            Log.d(TAG, "onClick: Entering messageView:onClick")
+            if (aboutDialog != null && aboutDialog?.isShowing == true) {
+                aboutDialog?.dismiss()
+            }
+        }
+
         aboutDialog = builder.setView(messageView).create()
         aboutDialog?.setCanceledOnTouchOutside(true)
 
@@ -124,6 +131,29 @@ class MainActivity : AppCompatActivity(),
 
         aboutDialog?.show()
     }
+
+//    private fun showAboutDialog() {
+//        val messageView = layoutInflater.inflate(R.layout.about, null, false)
+//        val builder = AlertDialog.Builder(this)
+//
+//        builder.setTitle(R.string.app_name)
+//        builder.setIcon(R.mipmap.ic_launcher)
+//
+//        aboutDialog = builder.setView(messageView).create()
+//        aboutDialog?.setCanceledOnTouchOutside(true)
+//
+//        messageView.setOnClickListener {
+//            Log.d(TAG, "Entering messageView.onClick")
+//            if (aboutDialog != null && aboutDialog?.isShowing == true) {
+//                aboutDialog?.dismiss()
+//            }
+//        }
+//
+//        val aboutVersion = messageView.findViewById(R.id.about_version) as TextView
+//        aboutVersion.text = BuildConfig.VERSION_NAME
+//
+//        aboutDialog?.show()
+//    }
 
     override fun onTaskEdit(task: Task) {
         taskEditRequest(task)
