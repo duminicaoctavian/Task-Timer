@@ -112,8 +112,8 @@ class AppDialog : AppCompatDialogFragment() {
 //        dialogEvents?.onDialogCancelled(dialogId)
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        Log.d(TAG, "onDismiss called")
-        super.onDismiss(dialog)
-    }
+//    override fun onDismiss(dialog: DialogInterface) {
+//        Log.d(TAG, "onDismiss called")
+//        super.onDismiss(dialog)
+//    }
 }
