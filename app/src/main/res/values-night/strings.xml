@@ -21,4 +21,5 @@
     <string name="cancelEditDiag_message">You have unsaved changes. Do you want to abandon your changes, or continue editing?</string>
     <string name="cancelEditDiag_positive_caption">Abandon changes</string>
     <string name="cancelEditDiag_negative_caption">Continue editing</string>
+    <string name="about_copyright">Copyright © 2020 Octavian Duminica</string>
 </resources>
