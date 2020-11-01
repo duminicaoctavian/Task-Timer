@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="?attr/colorPrimary"
-        tools:text="@string/about_copyright" />
+        android:text="@string/about_copyright"
+        android:textColor="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/about_weblink"
@@ -38,8 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:autoLink="web"
-        android:textColor="?attr/colorPrimary"
-        tools:text="@string/about_weblink" />
+        android:text="@string/about_weblink"
+        android:textColor="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/about_email"
@@ -47,14 +47,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:autoLink="email"
-        android:textColor="?attr/colorPrimary"
-        tools:text="@string/about_email" />
+        android:text="@string/about_email"
+        android:textColor="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/about_credits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="?attr/colorPrimary"
-        tools:text="@string/about_credits" />
+        android:text="@string/about_credits"
+        android:textColor="?attr/colorPrimary" />
 </LinearLayout>
