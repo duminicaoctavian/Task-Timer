@@ -15,7 +15,8 @@ private const val DIALOG_ID_CANCEL_EDIT = 1
 
 class MainActivity : AppCompatActivity(),
     AddEditFragment.OnSaveClicked,
-    MainActivityFragment.OnTaskEdit {
+    MainActivityFragment.OnTaskEdit,
+    AppDialog.DialogEvents {
 
     //Whether or not the activity is in 2-pane mode
     // i.e running in landscape, or on tablet
@@ -134,6 +135,14 @@ class MainActivity : AppCompatActivity(),
             } else {
                 removeEditPane(fragment)
             }
+        }
+    }
+
+    override fun onPositiveDialogResult(dialogId: Int, args: Bundle) {
+        Log.d(TAG, "onPositiveDialogResult: called with dialogId $dialogId")
+        if (dialogId == DIALOG_ID_CANCEL_EDIT) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.task_details_container)
+            removeEditPane(fragment)
         }
     }
 
