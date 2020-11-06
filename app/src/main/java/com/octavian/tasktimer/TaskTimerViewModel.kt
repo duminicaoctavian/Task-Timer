@@ -102,19 +102,46 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
         if (timingRecord == null) {
             // no task being timed, start timing the new task
             currentTiming = Timing(task.id)
-            // saveTiming(currentTiming)
+            saveTiming(currentTiming!!)
         } else {
             // We have a task being timed, so save it
             timingRecord.setDuration()
-            // saveTiming(timingRecord)
+            saveTiming(timingRecord)
 
             if (task.id == timingRecord.taskId) {
                 // the current task was tapped a second time, stop timing
                 currentTiming = null
             } else {
                 // a new task is being timed
-                currentTiming = Timing(task.id)
-                // saveTiming(currentTiming)
+                val newTiming = Timing(task.id)
+                saveTiming(newTiming)
+                currentTiming = newTiming
+            }
+        }
+    }
+
+    private fun saveTiming(currentTiming: Timing) {
+        Log.d(TAG, "saveTiming: called")
+
+        // Are we updating, or inserting a new row?
+        val inserting = (currentTiming.duration == 0L)
+
+        val values = ContentValues().apply {
+            if (inserting) {
+                put(TimingsContract.Columns.TIMING_TASK_ID, currentTiming.taskId)
+                put(TimingsContract.Columns.TIMING_START_TIME, currentTiming.startTime)
+            }
+            put(TimingsContract.Columns.TIMING_DURATION, currentTiming.duration)
+        }
+
+        GlobalScope.launch {
+            if (inserting) {
+                val uri = getApplication<Application>().contentResolver.insert(TimingsContract.CONTENT_URI, values)
+                if (uri != null) {
+                    currentTiming.id = TimingsContract.getId(uri)
+                }
+            } else {
+                getApplication<Application>().contentResolver.update(TimingsContract.buildUriFromId(currentTiming.id), values, null, null)
             }
         }
     }
