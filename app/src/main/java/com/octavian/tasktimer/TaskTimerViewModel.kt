@@ -30,16 +30,16 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
     val cursor: LiveData<Cursor>
         get() = databaseCursor
 
+    private val taskTiming = MutableLiveData<String>()
+    val timing: LiveData<String>
+        get() = taskTiming
+
     init {
         Log.d(TAG, "TaskTimerViewModel: created")
         getApplication<Application>().contentResolver.registerContentObserver(TasksContract.CONTENT_URI,
             true, contentObserver)
         loadTasks()
     }
-
-    private val taskTiming = MutableLiveData<String>()
-    val timing: LiveData<String>
-        get() = taskTiming
 
     private fun loadTasks() {
         val projection = arrayOf(TasksContract.Columns.ID,
