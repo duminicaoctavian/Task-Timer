@@ -37,6 +37,10 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
         loadTasks()
     }
 
+    private val taskTiming = MutableLiveData<String>()
+    val timing: LiveData<String>
+        get() = taskTiming
+
     private fun loadTasks() {
         val projection = arrayOf(TasksContract.Columns.ID,
                 TasksContract.Columns.TASK_NAME,
@@ -118,6 +122,9 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
                 currentTiming = newTiming
             }
         }
+
+        // Update the LiveData
+        taskTiming.value = if (currentTiming != null) task.name else null
     }
 
     private fun saveTiming(currentTiming: Timing) {
