@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.octavian.tasktimer.debug.TestData
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -96,6 +97,12 @@ class MainActivity : AppCompatActivity(),
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        if (BuildConfig.DEBUG) {
+            val generate = menu.findItem(R.id.menumain_generate)
+            generate.isVisible = true
+        }
+
         return true
     }
 
@@ -110,6 +117,7 @@ class MainActivity : AppCompatActivity(),
                 dialog.show(supportFragmentManager, null)
             }
             R.id.menumain_showAbout -> showAboutDialog()
+            R.id.menumain_generate -> TestData.generateTestData(contentResolver)
             android.R.id.home -> {
                 Log.d(TAG, "onOptionsItemSelected: home button pressed")
                 val fragment = findFragmentById(R.id.task_details_container)
