@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import kotlinx.android.synthetic.main.settings_dialog.*
+import java.lang.IndexOutOfBoundsException
 import java.util.*
 
 private const val TAG = "SettingsDialog"
@@ -15,6 +16,8 @@ private const val TAG = "SettingsDialog"
 const val SETTINGS_FIRST_DAY_OF_WEEK = "FirstDay"
 const val SETTINGS_IGNORE_LESS_THAN = "IgnoreLessThan"
 const val SETTINGS_DEFAULT_IGNORE_LESS_THAN = 0
+
+private val deltas = intArrayOf(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 900, 1800, 2700)
 
 class SettingsDialog: AppCompatDialogFragment() {
 
@@ -49,7 +52,14 @@ class SettingsDialog: AppCompatDialogFragment() {
 
         firstDaySpinner.setSelection(firstDay - GregorianCalendar.SUNDAY)
 
-        ignoreSeconds.progress = ignoreLessThan
+        val seekBarValue = deltas.binarySearch(ignoreLessThan)
+        if (seekBarValue < 0) {
+            throw IndexOutOfBoundsException("Value $seekBarValue not found in deltas array")
+        }
+
+        ignoreSeconds.max = deltas.size - 1
+        Log.d(TAG, "onViewStateRestored: setting slider to $seekBarValue")
+        ignoreSeconds.progress = seekBarValue
     }
 
     private fun readValues() {
@@ -62,7 +72,7 @@ class SettingsDialog: AppCompatDialogFragment() {
 
     private fun saveValues() {
         val newFirstDay = firstDaySpinner.selectedItemPosition + GregorianCalendar.SUNDAY
-        val newIgnoreLessThan = ignoreSeconds.progress
+        val newIgnoreLessThan = deltas[ignoreSeconds.progress]
 
         Log.d(TAG, "Saving first day = $newFirstDay, ignore seconds: $newIgnoreLessThan")
 
