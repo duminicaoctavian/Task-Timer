@@ -25,7 +25,6 @@ private const val TIMINGS_ID = 201
 private const val CURRENT_TIMING = 300
 
 private const val TASK_DURATIONS = 400
-private const val TASK_DURATIONS_ID = 401
 
 val CONTENT_AUTHORITY_URI: Uri = Uri.parse("content://$CONTENT_AUTHORITY")
 
@@ -47,9 +46,8 @@ class AppProvider: ContentProvider() {
         matcher.addURI(CONTENT_AUTHORITY, "${TimingsContract.TABLE_NAME}/#", TIMINGS_ID)
 
         matcher.addURI(CONTENT_AUTHORITY, CurrentTimingContract.TABLE_NAME, CURRENT_TIMING)
-//
-//        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASK_DURATIONS);
-//        matcher.addURI(CONTENT_AUTHORITY, "${DurationsContract.TABLE_NAME}/#", TASK_DURATIONS_ID)
+
+        matcher.addURI(CONTENT_AUTHORITY, DurationsContract.TABLE_NAME, TASK_DURATIONS)
 
         return matcher
     }
@@ -73,10 +71,8 @@ class AppProvider: ContentProvider() {
             TIMINGS_ID -> TimingsContract.CONTENT_ITEM_TYPE
 
             CURRENT_TIMING -> CurrentTimingContract.CONTENT_ITEM_TYPE
-//
-//            TASK_DURATIONS -> DurationsContract.CONTENT_TYPE
-//
-//            TASK_DURATIONS_ID -> DurationsContract.CONTENT_ITEM_TYPE
+
+            TASK_DURATIONS -> DurationsContract.CONTENT_TYPE
 
             else -> throw IllegalArgumentException("unknown Uri: $uri")
         }
@@ -112,15 +108,8 @@ class AppProvider: ContentProvider() {
             CURRENT_TIMING -> {
                 queryBuilder.tables = CurrentTimingContract.TABLE_NAME
             }
-//
-//            TASK_DURATIONS -> queryBuilder.tables = DurationsContract.TABLE_NAME
-//
-//            TASK_DURATIONS_ID -> {
-//                queryBuilder.tables = DurationsContract.TABLE_NAME
-//                val durationId = DurationsContract.getId(uri)
-//                queryBuilder.appendWhere("${DurationsContract.Columns.ID} = ")
-//                queryBuilder.appendWhereEscapeString("$durationId")
-//            }
+
+            TASK_DURATIONS -> queryBuilder.tables = DurationsContract.TABLE_NAME
 
             else -> throw IllegalArgumentException("Unknown URI: $uri")
         }
