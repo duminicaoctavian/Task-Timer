@@ -29,7 +29,8 @@ class SettingsDialog: AppCompatDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: called")
         super.onCreate(savedInstanceState)
-        setStyle(AppCompatDialogFragment.STYLE_NORMAL, R.style.SettingsDialogStyle)
+        //setStyle(AppCompatDialogFragment.STYLE_NORMAL, R.style.SettingsDialogStyle)
+        retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,24 +79,35 @@ class SettingsDialog: AppCompatDialogFragment() {
         Log.d(TAG, "inViewStateRestored: called")
 
         super.onViewStateRestored(savedInstanceState)
-        readValues()
+        if (savedInstanceState == null) {
 
-        firstDaySpinner.setSelection(firstDay - GregorianCalendar.SUNDAY)
+            readValues()
 
-        val seekBarValue = deltas.binarySearch(ignoreLessThan)
-        if (seekBarValue < 0) {
-            throw IndexOutOfBoundsException("Value $seekBarValue not found in deltas array")
-        }
+            firstDaySpinner.setSelection(firstDay - GregorianCalendar.SUNDAY)
 
-        ignoreSeconds.max = deltas.size - 1
-        Log.d(TAG, "onViewStateRestored: setting slider to $seekBarValue")
-        ignoreSeconds.progress = seekBarValue
+            val seekBarValue = deltas.binarySearch(ignoreLessThan)
+            if (seekBarValue < 0) {
+                throw IndexOutOfBoundsException("Value $seekBarValue not found in deltas array")
+            }
 
-        if (ignoreLessThan < 60) {
-            ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, ignoreLessThan, resources.getQuantityString(R.plurals.settingsLittleUnits, ignoreLessThan))
-        } else {
-            val minutes = ignoreLessThan / 60
-            ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, minutes, resources.getQuantityString(R.plurals.settingsBigUnits, minutes))
+            ignoreSeconds.max = deltas.size - 1
+            Log.d(TAG, "onViewStateRestored: setting slider to $seekBarValue")
+            ignoreSeconds.progress = seekBarValue
+
+            if (ignoreLessThan < 60) {
+                ignoreSecondsTitle.text = getString(
+                    R.string.settingsIgnoreSecondsTitle,
+                    ignoreLessThan,
+                    resources.getQuantityString(R.plurals.settingsLittleUnits, ignoreLessThan)
+                )
+            } else {
+                val minutes = ignoreLessThan / 60
+                ignoreSecondsTitle.text = getString(
+                    R.string.settingsIgnoreSecondsTitle,
+                    minutes,
+                    resources.getQuantityString(R.plurals.settingsBigUnits, minutes)
+                )
+            }
         }
     }
 
@@ -122,5 +134,10 @@ class SettingsDialog: AppCompatDialogFragment() {
             }
             apply()
         }
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy: called")
+        super.onDestroy()
     }
 }
