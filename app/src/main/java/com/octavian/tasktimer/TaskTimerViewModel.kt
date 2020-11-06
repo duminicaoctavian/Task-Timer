@@ -24,6 +24,8 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    private var currentTiming: Timing? = null
+
     private val databaseCursor = MutableLiveData<Cursor>()
     val cursor: LiveData<Cursor>
         get() = databaseCursor
@@ -89,6 +91,31 @@ class TaskTimerViewModel(application: Application) : AndroidViewModel(applicatio
 //        thread {
         GlobalScope.launch {
             getApplication<Application>().contentResolver?.delete(TasksContract.buildUriFromId(taskId), null, null)
+        }
+    }
+
+    fun timeTask(task: Task) {
+        Log.d(TAG, "timeTask: called")
+        // Use local variable, to allow smart casts
+        val timingRecord = currentTiming
+
+        if (timingRecord == null) {
+            // no task being timed, start timing the new task
+            currentTiming = Timing(task.id)
+            // saveTiming(currentTiming)
+        } else {
+            // We have a task being timed, so save it
+            timingRecord.setDuration()
+            // saveTiming(timingRecord)
+
+            if (task.id == timingRecord.taskId) {
+                // the current task was tapped a second time, stop timing
+                currentTiming = null
+            } else {
+                // a new task is being timed
+                currentTiming = Timing(task.id)
+                // saveTiming(currentTiming)
+            }
         }
     }
 
