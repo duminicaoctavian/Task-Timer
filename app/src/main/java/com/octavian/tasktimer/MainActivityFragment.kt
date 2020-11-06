@@ -81,7 +81,8 @@ class MainActivityFragment : Fragment(),
     }
 
     override fun onTaskLongClick(task: Task) {
-
+        Log.d(TAG, "onTaskLongClick: called")
+        viewModel.timeTask(task)
     }
 
     override fun onPositiveDialogResult(dialogId: Int, args: Bundle) {
