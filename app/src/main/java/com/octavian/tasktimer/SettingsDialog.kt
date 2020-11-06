@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatDialogFragment
 import kotlinx.android.synthetic.main.settings_dialog.*
 import java.lang.IndexOutOfBoundsException
@@ -39,6 +40,26 @@ class SettingsDialog: AppCompatDialogFragment() {
             dismiss()
         }
 
+        ignoreSeconds.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (progress < 12) {
+                   ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, deltas[progress], resources.getQuantityString(R.plurals.settingsLittleUnits, deltas[progress]))
+                } else {
+                    val minutes = deltas[progress] / 60
+                    ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, minutes, resources.getQuantityString(R.plurals.settingsBigUnits, minutes))
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // We don't need this
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // Nor this
+            }
+        })
+
         cancelButton.setOnClickListener {
             dismiss()
         }
@@ -60,6 +81,13 @@ class SettingsDialog: AppCompatDialogFragment() {
         ignoreSeconds.max = deltas.size - 1
         Log.d(TAG, "onViewStateRestored: setting slider to $seekBarValue")
         ignoreSeconds.progress = seekBarValue
+
+        if (ignoreLessThan < 60) {
+            ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, ignoreLessThan, resources.getQuantityString(R.plurals.settingsLittleUnits, ignoreLessThan))
+        } else {
+            val minutes = ignoreLessThan / 60
+            ignoreSecondsTitle.text = getString(R.string.settingsIgnoreSecondsTitle, minutes, resources.getQuantityString(R.plurals.settingsBigUnits, minutes))
+        }
     }
 
     private fun readValues() {
