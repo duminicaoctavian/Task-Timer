@@ -1,8 +1,6 @@
 package com.octavian.tasktimer
 
-import android.content.ContentUris
 import android.net.Uri
-import android.provider.BaseColumns
 
 object CurrentTimingContract { // object is automatically a thread safe singleton
 
@@ -16,7 +14,7 @@ object CurrentTimingContract { // object is automatically a thread safe singleto
     const val CONTENT_TYPE = "vnd.android.cursor.dir/vnd.$CONTENT_AUTHORITY.$TABLE_NAME"
     const val CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.$CONTENT_AUTHORITY.$TABLE_NAME"
 
-    // Timings fields
+    // CurrentTiming fields
     object Columns {
         const val TIMING_ID = TimingsContract.Columns.ID
         const val TASK_ID = TimingsContract.Columns.TIMING_TASK_ID

@@ -15,7 +15,7 @@ import java.lang.IllegalStateException
 
 private const val TAG = "AppDatabase"
 private const val DATABASE_NAME = "TaskTimer.db"
-private const val DATABASE_VERSION = 3
+private const val DATABASE_VERSION = 4
 
 internal class AppDatabase private constructor(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -36,6 +36,7 @@ internal class AppDatabase private constructor(context: Context): SQLiteOpenHelp
 
         addTimingsTable(db)
         addCurrentTimingView(db)
+        addDurationsView(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -44,9 +45,14 @@ internal class AppDatabase private constructor(context: Context): SQLiteOpenHelp
             1 -> {
                 addTimingsTable(db)
                 addCurrentTimingView(db)
+                addDurationsView(db)
             }
             2 -> {
                 addCurrentTimingView(db)
+                addDurationsView(db)
+            }
+            3 -> {
+                addDurationsView(db)
             }
             else -> throw IllegalStateException("onUpgrade() with unknown newVersion: ${newVersion}")
         }
@@ -99,6 +105,35 @@ internal class AppDatabase private constructor(context: Context): SQLiteOpenHelp
     """.replaceIndent(" ")
         Log.d(TAG, sSQLTimingView)
         db.execSQL(sSQLTimingView)
+    }
+
+    private fun addDurationsView(db: SQLiteDatabase) {
+        /*
+        CREATE VIEW vwTaskDurations AS
+        SELECT Tasks.Name,
+        Tasks.Description,
+        Timings.StartTime,
+        Date(Timings.StartTime, 'unixepoch', 'localtime') AS StartDate,
+        SUM(Timings.Duration) AS Duration
+        FROM Tasks INNER_JOIN Timings
+        ON Tasks._id = Timings.TaskId
+        GROUP BY Tasks._id, StartDate;
+         */
+        val sSQL = """CREATE VIEW ${DurationsContract.TABLE_NAME}
+                AS SELECT ${TasksContract.TABLE_NAME}.${TasksContract.Columns.TASK_NAME},
+                ${TasksContract.TABLE_NAME}.${TasksContract.Columns.TASK_DESCRIPTION},
+                ${TimingsContract.TABLE_NAME}.${TimingsContract.Columns.TIMING_START_TIME},
+                DATE(${TimingsContract.TABLE_NAME}.${TimingsContract.Columns.TIMING_START_TIME}, 'unixepoch', 'localtime')
+                AS ${DurationsContract.Columns.START_DATE},
+                SUM(${TimingsContract.TABLE_NAME}.${TimingsContract.Columns.TIMING_DURATION})
+                AS ${DurationsContract.Columns.DURATION}
+                FROM ${TasksContract.TABLE_NAME} INNER JOIN ${TimingsContract.TABLE_NAME}
+                ON ${TasksContract.TABLE_NAME}.${TasksContract.Columns.ID} =
+                ${TimingsContract.TABLE_NAME}.${TimingsContract.Columns.TIMING_TASK_ID}
+                GROUP BY ${TasksContract.TABLE_NAME}.${TasksContract.Columns.ID}, ${DurationsContract.Columns.START_DATE}
+                ;""".replaceIndent(" ")
+        Log.d(TAG, sSQL)
+        db.execSQL(sSQL)
     }
 
     companion object : SingletonHolder<AppDatabase, Context>(::AppDatabase)
