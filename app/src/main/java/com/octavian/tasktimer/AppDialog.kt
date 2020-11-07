@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDialogFragment
 import java.lang.ClassCastException
 import java.lang.IllegalArgumentException
+import java.lang.NullPointerException
 
 private const val TAG = "AppDialog"
 
@@ -38,8 +39,8 @@ class AppDialog : AppCompatDialogFragment() {
         // Activities/Fragments containing this fragment must implement its callbacks.
         dialogEvents = try {
             // Is there a parent fragment? If so, that will be what we call back
-            activity as DialogEvents
-        } catch (e: TypeCastException) {
+            parentFragment as DialogEvents
+        } catch (e: NullPointerException) {
             try {
                 // No parent fragment, so call back the Activity instead
                 context as DialogEvents
