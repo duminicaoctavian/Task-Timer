@@ -38,7 +38,7 @@ class AppDialog : AppCompatDialogFragment() {
         // Activities/Fragments containing this fragment must implement its callbacks.
         dialogEvents = try {
             // Is there a parent fragment? If so, that will be what we call back
-            parentFragment as DialogEvents
+            activity as DialogEvents
         } catch (e: TypeCastException) {
             try {
                 // No parent fragment, so call back the Activity instead

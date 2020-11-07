@@ -1,7 +1,10 @@
 package com.octavian.tasktimer
 
 import android.app.Application
+import android.database.ContentObserver
 import android.database.Cursor
+import android.net.Uri
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -20,6 +23,13 @@ enum class SortColumns {
 }
 
 class DurationsViewModel(application: Application): AndroidViewModel(application) {
+
+    private val contentObserver = object : ContentObserver(Handler()) {
+        override fun onChange(selfChange: Boolean, uri: Uri?) {
+            Log.d(TAG, "contentObserver.onChange: called. uri is $uri")
+            loadData()
+        }
+    }
 
     private val calendar = GregorianCalendar()
 
@@ -43,6 +53,7 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
         get() = _displayWeek
 
     init {
+        application.contentResolver.registerContentObserver(TimingsContract.CONTENT_URI, true, contentObserver)
         applyFilter()
     }
 
@@ -154,5 +165,10 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
         }
 
         Log.d(TAG, "Exiting deleteRecords")
+    }
+
+    override fun onCleared() {
+        Log.d(TAG, "onCleared: called")
+        getApplication<Application>().contentResolver.unregisterContentObserver(contentObserver)
     }
 }
