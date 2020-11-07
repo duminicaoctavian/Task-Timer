@@ -43,7 +43,7 @@ class DatePickerFragment: AppCompatDialogFragment(), DatePickerDialog.OnDateSetL
         val day = cal.get(GregorianCalendar.DAY_OF_MONTH)
 
         val context = context ?: throw NullPointerException("insert: Context cannot be null!")
-        val dpd = DatePickerDialog(context, this, year, month, day)
+        val dpd = UnbuggyDatePickerDialog(context, this, year, month, day)
         if (title != null) {
             dpd.setTitle(title)
         }
