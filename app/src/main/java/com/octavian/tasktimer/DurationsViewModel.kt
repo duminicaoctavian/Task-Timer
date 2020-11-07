@@ -138,4 +138,21 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
             databaseCursor.postValue(cursor)
         }
     }
+
+    fun deleteRecords(timeInMilliseconds: Long) {
+        // clear all records from Timings table prior to the date selected
+        Log.d(TAG, "Entering deleteRecords")
+
+        val longDate = timeInMilliseconds / 1000
+        val selectionArgs = arrayOf(longDate.toString())
+        val selection = "${TimingsContract.Columns.TIMING_START_TIME} < ?"
+
+        Log.d(TAG, "Deleting records prior to $longDate")
+
+        GlobalScope.launch {
+            getApplication<Application>().contentResolver.delete(TimingsContract.CONTENT_URI, selection, selectionArgs)
+        }
+
+        Log.d(TAG, "Exiting deleteRecords")
+    }
 }

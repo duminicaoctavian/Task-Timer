@@ -13,14 +13,19 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.task_durations.*
 import java.lang.IllegalArgumentException
+import java.text.DateFormat
+import java.util.*
 
 private const val TAG = "DurationsReport"
 
 private const val DIALOG_FILTER = 1
 private const val DIALOG_DELETE = 2
 
+private const val DELETION_DATE = "Deletion date"
+
 class DurationsReport: AppCompatActivity(),
     DatePickerDialog.OnDateSetListener,
+    AppDialog.DialogEvents,
     View.OnClickListener {
 
     private val viewModel by lazy { ViewModelProviders.of(this).get(DurationsViewModel::class.java) }
@@ -72,7 +77,8 @@ class DurationsReport: AppCompatActivity(),
                 return true
             }
             R.id.rm_delete -> {
-
+                showDatePickerDialog(getString(R.string.date_title_delete), DIALOG_DELETE)
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
@@ -104,19 +110,40 @@ class DurationsReport: AppCompatActivity(),
         dialogFragment.show(supportFragmentManager, "datePicker")
     }
 
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+    override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
         Log.d(TAG, "onDateSet: called")
 
         // Check the id, so we know what to do with the result
-        val dialogId = view?.tag as Int
+        val dialogId = view.tag as Int
         when (dialogId) {
             DIALOG_FILTER -> {
                 viewModel.setReportDate(year, month, dayOfMonth)
             }
             DIALOG_DELETE -> {
+                // we need to format the date for the user's locale
+                val cal = GregorianCalendar()
+                cal.set(year, month, dayOfMonth, 0, 0, 0)
+                val fromDate = DateFormat.getDateInstance().format(cal.time)
 
+                val dialog = AppDialog()
+                val args = Bundle()
+                args.putInt(DIALOG_ID, DIALOG_DELETE) // use the same is value
+                args.putString(DIALOG_MESSAGE, getString(R.string.delete_timings_message, fromDate))
+
+                args.putLong(DELETION_DATE, cal.timeInMillis)
+                dialog.arguments = args
+                dialog.show(supportFragmentManager, null)
             }
             else -> throw IllegalArgumentException("Invalid mode when receiving DatePickerDialog result")
+        }
+    }
+
+    override fun onPositiveDialogResult(dialogId: Int, args: Bundle) {
+        Log.d(TAG, "onPositiveDialogResult: called with id $dialogId")
+        if (dialogId == DIALOG_DELETE) {
+            // Retrieve the date from the Bundle
+            val deleteDate = args.getLong(DELETION_DATE)
+            viewModel.deleteRecords(deleteDate)
         }
     }
 
