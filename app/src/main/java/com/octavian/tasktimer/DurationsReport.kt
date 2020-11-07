@@ -1,21 +1,19 @@
 package com.octavian.tasktimer
 
-import android.database.Cursor
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.task_durations.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 private const val TAG = "DurationsReport"
 
 class DurationsReport: AppCompatActivity() {
 
+    private val viewModel by lazy { ViewModelProviders.of(this).get(DurationsViewModel::class.java) }
+
     private val reportAdapter by lazy { DurationsRVAdapter(this, null) }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +23,7 @@ class DurationsReport: AppCompatActivity() {
         td_list.layoutManager = LinearLayoutManager(this)
         td_list.adapter = reportAdapter
 
-        loadData()
+        viewModel.cursor.observe(this, Observer { cursor -> reportAdapter.swapCursor(cursor)?.close() })
     }
 
 //    override fun onDestroy() {
