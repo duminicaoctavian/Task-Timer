@@ -108,10 +108,10 @@ class DurationsReport: AppCompatActivity(),
         Log.d(TAG, "onDateSet: called")
 
         // Check the id, so we know what to do with the result
-        val dialogId = view.tag as Int
+        val dialogId = view?.tag as Int
         when (dialogId) {
             DIALOG_FILTER -> {
-
+                viewModel.setReportDate(year, month, dayOfMonth)
             }
             DIALOG_DELETE -> {
 
