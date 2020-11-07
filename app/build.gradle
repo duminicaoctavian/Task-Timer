@@ -20,6 +20,7 @@ android {
         versionName "2.0.1 beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
