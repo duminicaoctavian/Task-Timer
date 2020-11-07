@@ -1,6 +1,8 @@
 package com.octavian.tasktimer
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -40,6 +42,41 @@ class DurationsReport: AppCompatActivity(), View.OnClickListener {
             R.id.td_start_heading -> viewModel.sortOrder = SortColumns.START_DATE
             R.id.td_duration_heading -> viewModel.sortOrder = SortColumns.DURATION
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_report, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        when (id) {
+            R.id.rm_filter_period -> {
+                viewModel.toggleDisplayWeek() // was showing a week, so now show a day - or vice versa
+                invalidateOptionsMenu() // force call to onPrepareOptionsMenu to redraw our changed menu
+                return true
+            }
+            R.id.rm_filter_date -> {}
+            R.id.rm_delete -> {}
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val item = menu.findItem(R.id.rm_filter_period)
+        if (item != null) {
+            // switch icon and title to represent 7 days or 1 day, as appropriate to the future function of the menu item
+            if (viewModel.displayWeek) {
+                item.setIcon(R.drawable.ic_filter_1_black_24p)
+                item.setTitle(R.string.rm_title_filter_day)
+            } else {
+                item.setIcon(R.drawable.ic_filter_7_black_24p)
+                item.setTitle(R.string.rm_title_filter_week)
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     //    override fun onDestroy() {

@@ -35,8 +35,17 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
     private val selection = "${DurationsContract.Columns.START_TIME} Between ? AND ?"
     private var selectionArgs = arrayOf("1556668800", "1559347199")
 
+    private var _displayWeek = true
+    val displayWeek: Boolean
+        get() = _displayWeek
+
     init {
         loadData()
+    }
+
+    fun toggleDisplayWeek() {
+        _displayWeek = !_displayWeek
+        // applyFilter()
     }
 
     private fun loadData() {
