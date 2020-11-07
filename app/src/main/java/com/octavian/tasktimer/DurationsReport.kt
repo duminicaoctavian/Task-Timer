@@ -80,6 +80,10 @@ class DurationsReport: AppCompatActivity(),
                 showDatePickerDialog(getString(R.string.date_title_delete), DIALOG_DELETE)
                 return true
             }
+            R.id.rm_settings -> {
+                val dialog = SettingsDialog()
+                dialog.show(supportFragmentManager, "settings")
+            }
         }
         return super.onOptionsItemSelected(item)
     }
