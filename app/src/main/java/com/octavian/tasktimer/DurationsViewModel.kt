@@ -1,6 +1,10 @@
 package com.octavian.tasktimer
 
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
@@ -31,7 +35,20 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
         }
     }
 
-    private val calendar = GregorianCalendar()
+    private var calendar = GregorianCalendar()
+
+    private val broadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d(TAG, "broadcastReceiver.onReceive called. Intent is $intent")
+            val action = intent?.action
+            if (action == Intent.ACTION_TIMEZONE_CHANGED || action == Intent.ACTION_LOCALE_CHANGED) {
+                val currentTime = calendar.timeInMillis
+                calendar = GregorianCalendar()
+                calendar.timeInMillis = currentTime
+                applyFilter()
+            }
+        }
+    }
 
     private val databaseCursor = MutableLiveData<Cursor>()
     val cursor: LiveData<Cursor>
@@ -54,6 +71,11 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
 
     init {
         application.contentResolver.registerContentObserver(TimingsContract.CONTENT_URI, true, contentObserver)
+
+        val broadcastFilter = IntentFilter(Intent.ACTION_TIMEZONE_CHANGED)
+        broadcastFilter.addAction(Intent.ACTION_LOCALE_CHANGED)
+        application.registerReceiver(broadcastReceiver, broadcastFilter)
+
         applyFilter()
     }
 
@@ -170,5 +192,6 @@ class DurationsViewModel(application: Application): AndroidViewModel(application
     override fun onCleared() {
         Log.d(TAG, "onCleared: called")
         getApplication<Application>().contentResolver.unregisterContentObserver(contentObserver)
+        getApplication<Application>().unregisterReceiver(broadcastReceiver)
     }
 }
